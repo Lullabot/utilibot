@@ -1,0 +1,24 @@
+{
+  "name": "utilibot",
+  "version": "1.0.0",
+  "description": "Slack bot for Lullabot channel",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mettamatt/utilibot.git"
+  },
+  "author": "Matt Westgate",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mettamatt/utilibot/issues"
+  },
+  "homepage": "https://github.com/mettamatt/utilibot#readme",
+  "dependencies": {
+    "path": "^0.12.7",
+    "request": "^2.79.0",
+    "slackbots": "^0.5.3"
+  }
+}
