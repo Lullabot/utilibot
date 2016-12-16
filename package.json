@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/mettamatt/utilibot#readme",
   "dependencies": {
+    "datejs": "^1.0.0-rc3",
     "path": "^0.12.7",
     "request": "^2.79.0",
     "slackbots": "^0.5.3"

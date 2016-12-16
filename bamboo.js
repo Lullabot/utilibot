@@ -16,8 +16,8 @@ function BambooHR(params) {
  * Get groups
  * @returns {vow.Promise}
  */
-BambooHR.prototype.getWhosOut = function() {
-	return this._api('/v1/time_off/whos_out/');
+BambooHR.prototype.getWhosOut = function(params, callback) {
+  return this._api('/v1/time_off/whos_out/?start='+encodeURIComponent(params.start)+'&end='+encodeURIComponent(params.end), callback);
 };
 
 /**
@@ -27,7 +27,8 @@ BambooHR.prototype.getWhosOut = function() {
  * @returns {vow.Promise}
  * @private
  */
-BambooHR.prototype._api = function(path, params) {
+BambooHR.prototype._api = function(path, callback) {
+	
 	var data = {
   	url: 'https://'+ this.apikey +':x@api.bamboohr.com/api/gateway.php/' + this.subdomain + path,
 		headers: {
@@ -36,23 +37,13 @@ BambooHR.prototype._api = function(path, params) {
   };
 
  	request.get(data, function(err, response, body) {
-   	if (err) {
-     	return err;
-     }
-     try {
-     	body = JSON.parse(body);
-
-       // Response always contain a top-level boolean property ok,
-       // indicating success or failure
-       if (body.ok) {
-       	return body;
-       } else {
-       	return error;
-       }
-     } catch (e) {
-     	return e;
-     }
-   });
+   	if (!err && response.statusCode == 200) {
+			 return callback(null, JSON.parse(body));
+		}
+		else {
+			return callback(err);
+		}
+  });
 };
 
 function assert(condition, error) {
