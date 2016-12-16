@@ -22,43 +22,55 @@ bot.on('start', function() {
 	bot.postMessageToChannel('general', 'Take the new OOO bot for a test drive.', params);
 });
 
-/**
- * @param {object} data
- */
+// start param needs to be a date object
+// Iterate through the time off requests and build/return the response array.
+function _build_ooo(employees, start) {
+	if (!start) {
+		start = Date.today();
+	}
+
+	var ooo = new Array();
+	ooo.push('*OOO for ' + start.toString('dddd, MMM d yyyy') + '*');
+
+	Object.keys(employees).forEach(function(key) {
+		var e = employees[key];
+		if (e.type == 'timeOff') {
+			var ooo_date = null;
+			if (e.end != start.toString('yyyy-MM-dd')) {
+				var date = Date.parse(e.end);
+				ooo_date = ' _until ' + date.toString('MMM. d') + '_';
+			}
+
+			if (!ooo_date) {
+				ooo.push(e.name);
+			} else {
+				ooo.push(e.name + ooo_date);
+			}
+		} else if (e.type == 'holiday') {
+			ooo.push('*' + e.name + '*');
+		}
+	});
+	if (!ooo[1]) ooo.push('_Everyone will be in the office._');
+	return ooo;
+}
+
+// Watch Slack messages to respond to requests of the bot.
 bot.on('message', function(message) {
 	var text = String(message.text).toUpperCase();
 
 	if (message.type === 'message') {
 
+		// The default OOO request. Assume the current day as the OOO inquiry.
 		if (text == '000?' || text == 'OOO?') {
 			var today = Date.today().toString('yyyy-MM-dd');
 			bamboo.getWhosOut({
 				start: today,
 				end: today
 			}, function(err, employees) {
-				var ooo = new Array();
-				ooo.push('*OOO for ' + Date.today().toString('dddd, M/d/yyyy') + '*');
-				Object.keys(employees).forEach(function(key) {
-					var e = employees[key];
-					if (e.type == 'timeOff') {
-						var ooo_date = null;
-						if (e.end != today) {
-							var date = Date.parse(e.end);
-							ooo_date = ' _(until ' + date.toString('M/d') + ')_';
-						}
-
-						if (!ooo_date) {
-							ooo.push(e.name);
-						} else {
-							ooo.push(e.name + ooo_date);
-						}
-					} else if (e.type == 'holiday') {
-						ooo.push('*' + e.name + '*');
-					}
-				});
-				bot.postMessageToChannel('general', ooo.join('\r\n'), params);
+				bot.postMessageToChannel('general', _build_ooo(employees).join('\r\n'), params);
 			});
 		}
+		
 		// Would be cool to pass in a date like [ooo May 9?] 
 		else if (/^OOO/.test(text) || /^000/.test(text)) {
 			var regex = /(^OOO|^000) (.*)[?]$/;
@@ -72,27 +84,7 @@ bot.on('message', function(message) {
 					start: start.toString('yyyy-MM-dd'),
 					end: start.toString('yyyy-MM-dd')
 				}, function(err, employees) {
-					var ooo = new Array();
-					ooo.push('*OOO for ' + start.toString('dddd, M/d/yyyy') + '*');
-					Object.keys(employees).forEach(function(key) {
-						var e = employees[key];
-						if (e.type == 'timeOff') {
-							var ooo_date = null;
-							if (e.end != today) {
-								var date = Date.parse(e.end);
-								ooo_date = ' _(until ' + date.toString('M/d') + ')_';
-							}
-
-							if (!ooo_date) {
-								ooo.push(e.name);
-							} else {
-								ooo.push(e.name + ooo_date);
-							}
-						} else if (e.type == 'holiday') {
-							ooo.push('*' + e.name + '*');
-						}
-					});
-					bot.postMessageToChannel('general', ooo.join('\r\n'), params);
+					bot.postMessageToChannel('general', _build_ooo(employees, start).join('\r\n'), params);
 				});
 
 			} else {
