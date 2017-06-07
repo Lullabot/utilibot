@@ -54,6 +54,12 @@ function _build_ooo(employees, start) {
 	return ooo;
 }
 
+function _getChannelById(channel_id) {
+  return bot.channels.filter(function (item) { 
+    return item.id === channel_id; 
+  })[0];
+}
+
 // Watch Slack messages to respond to requests of the bot.
 bot.on('message', function(message) {
 	var text = String(message.text).toUpperCase();
@@ -66,7 +72,7 @@ bot.on('message', function(message) {
 				start: today,
 				end: today
 			}, function(err, employees) {
-				bot.postMessageToChannel(message.channel, _build_ooo(employees).join('\r\n'), params);
+				bot.postMessageToChannel(_getChannelById(message.channel).name, _build_ooo(employees).join('\r\n'), params);
 			});
 		}
 		
@@ -83,11 +89,11 @@ bot.on('message', function(message) {
 					start: start.toString('yyyy-MM-dd'),
 					end: start.toString('yyyy-MM-dd')
 				}, function(err, employees) {
-					bot.postMessageToChannel(message.channel, _build_ooo(employees, start).join('\r\n'), params);
+					bot.postMessageToChannel(_getChannelById(message.channel).name, _build_ooo(employees, start).join('\r\n'), params);
 				});
 
 			} else {
-				bot.postMessageToChannel(message.channel, "Hrm. I don't understand the date: " + result[2], params);
+				bot.postMessageToChannel(_getChannelById(message.channel).name, "Hrm. I don't understand the date: " + result[2], params);
 			}
 		}
 
