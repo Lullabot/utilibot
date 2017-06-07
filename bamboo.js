@@ -23,9 +23,9 @@ BambooHR.prototype.getWhosOut = function(params, callback) {
 
 /**
  * Send request to API method
- * @param {string} methodName
- * @param {object} params
- * @returns {vow.Promise}
+ * @param {string} path
+ * @param {function} callback
+ * @returns callback
  * @private
  */
 BambooHR.prototype._api = function(path, callback) {

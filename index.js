@@ -19,7 +19,7 @@ var params = {
 	icon_emoji: ':robot_face:'
 };
 bot.on('start', function() {
-	bot.postMessageToChannel('general', 'Take the new OOO bot for a test drive.', params);
+	//bot.postMessageToChannel('bot_testing', 'Take the new OOO bot for a test drive.', params);
 });
 
 // start param needs to be a date object
@@ -57,9 +57,8 @@ function _build_ooo(employees, start) {
 // Watch Slack messages to respond to requests of the bot.
 bot.on('message', function(message) {
 	var text = String(message.text).toUpperCase();
-
+  
 	if (message.type === 'message') {
-
 		// The default OOO request. Assume the current day as the OOO inquiry.
 		if (text == '000?' || text == 'OOO?') {
 			var today = Date.today().toString('yyyy-MM-dd');
@@ -67,7 +66,7 @@ bot.on('message', function(message) {
 				start: today,
 				end: today
 			}, function(err, employees) {
-				bot.postMessageToChannel('general', _build_ooo(employees).join('\r\n'), params);
+				bot.postMessageToChannel(message.channel, _build_ooo(employees).join('\r\n'), params);
 			});
 		}
 		
@@ -84,11 +83,11 @@ bot.on('message', function(message) {
 					start: start.toString('yyyy-MM-dd'),
 					end: start.toString('yyyy-MM-dd')
 				}, function(err, employees) {
-					bot.postMessageToChannel('general', _build_ooo(employees, start).join('\r\n'), params);
+					bot.postMessageToChannel(message.channel, _build_ooo(employees, start).join('\r\n'), params);
 				});
 
 			} else {
-				bot.postMessageToChannel('general', "Hrm. I don't understand the date: " + result[2], params);
+				bot.postMessageToChannel(message.channel, "Hrm. I don't understand the date: " + result[2], params);
 			}
 		}
 
