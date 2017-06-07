@@ -1,0 +1,5 @@
+{
+  "token": "YOUR SLACK TOKEN",
+	"bamboo_token": "YOUR BAMBOOHR TOKEN",
+	"subdomain": "example.com"
+}
