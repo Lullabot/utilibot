@@ -29,6 +29,10 @@ function _build_ooo(employees, start) {
 		start = Date.today();
 	}
 
+  // Sort by name, alphabetically, because what Herchel wants, Herchel gets!
+  // Herchel for President!
+  employees.sort(sortOn("name"));
+
 	var ooo = new Array();
 	ooo.push('*OOO for ' + start.toString('dddd, MMM d yyyy') + '*');
 
@@ -54,6 +58,19 @@ function _build_ooo(employees, start) {
 	return ooo;
 }
 
+function sortOn(property){
+  return function(a, b){
+    if(a[property] < b[property]) {
+      return -1;
+    } else if(a[property] > b[property]) {
+      return 1;
+    } else {
+      return 0;   
+    }
+  }
+}
+
+// Slack needs channel names rather than channel ids. 
 function _getChannelById(channel_id) {
   return bot.channels.filter(function (item) { 
     return item.id === channel_id; 
